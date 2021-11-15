@@ -156,7 +156,7 @@ function getRestaurantInfo(data) {
 //Slider
 
 function slider(data) {
-   const random = Math.floor(Math.random() * data.length);
+   const random = Math.floor(Math.random() * 100);
    const bannerImage = document.getElementsByClassName('banner-img')[0];
    const bannerTitle = document.getElementsByClassName('banner-title')[0];
   
