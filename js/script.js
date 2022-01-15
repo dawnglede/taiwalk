@@ -38,8 +38,8 @@ function getSpotInfo(data) {
       
         const random = Math.floor(Math.random() * data.length);
       
-        if( id[i-1] !== data[random].ID) {
-        id.push(data[random].ID);
+        if( id[i-1] !== data[random].ScenicSpotID) {
+        id.push(data[random].ScenicSpotID);
           
         let newCard = document.createElement("div");
         newCard.className = "card";
@@ -49,7 +49,7 @@ function getSpotInfo(data) {
           <div class="img-card">
             <img src="${data[random].Picture.PictureUrl1}">
           </div>  
-          <p class="img-title spot-name">${data[random].Name.length < 11 ? data[random].Name : data[random].Name.slice(0, 11) + "..." }</p>
+          <p class="img-title spot-name">${data[random].ScenicSpotName.length < 11 ? data[random].ScenicSpotName : data[random].ScenicSpotName.slice(0, 11) + "..." }</p>
           <p class="img-location">
             <img src="./src/images/icon/Vector.png">
             ${data[random].Address.slice(0,3)}
@@ -81,8 +81,6 @@ function getActivityInfo(data) {
   
     for (let i = 0; i < 4 ; i++) {
       
-    
-          
         const dateStart = new Date(data[i].StartTime);
         const dateEnd = new Date(data[i].EndTime);
           
@@ -91,7 +89,7 @@ function getActivityInfo(data) {
         let newActCardInfo = `
           <img src="${data[i].Picture.PictureUrl1}" class="act-img">
           <p class="date inline">${dateStart.toLocaleDateString()}-${dateEnd.toLocaleDateString()}</p>
-          <p class="act-name inline">${data[i].Name.length < 28 ? data[i].Name : data[i].Name.slice(0, 28) + "..." }</p>
+          <p class="act-name inline">${data[i].ActivityName.length < 28 ? data[i].ActivityName : data[i].ActivityName.slice(0, 28) + "..." }</p>
           <p class="inline act-city">
             <img src="./src/images/icon/Vector.png">
             ${data[i].City}
@@ -129,8 +127,8 @@ function getRestaurantInfo(data) {
       
         const random = Math.floor(Math.random() * data.length);
       
-        if( id[i-1] !== data[random].ID) {
-        id.push(data[random].ID);
+        if( id[i-1] !== data[random].RestaurantID) {
+        id.push(data[random].RestaurantID);
           
         let newResCard = document.createElement("div");
         newResCard.className = "card";
@@ -140,7 +138,7 @@ function getRestaurantInfo(data) {
           <div class="img-card">
             <img src="${data[random].Picture.PictureUrl1}">
           </div>  
-          <p class="img-title spot-name">${data[random].Name.length < 11 ? data[random].Name : data[random].Name.slice(0, 11) + "..." }</p>
+          <p class="img-title spot-name">${data[random].RestaurantName.length < 11 ? data[random].RestaurantName : data[random].RestaurantName.slice(0, 11) + "..." }</p>
           <p class="img-location">
             <img src="./src/images/icon/Vector.png">
             ${data[random].Address.slice(0,3)}
