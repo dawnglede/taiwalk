@@ -161,7 +161,7 @@ function slider(data) {
    bannerImage.style.backgroundImage = `url('${data[random].Picture.PictureUrl1}')`;
    bannerTitle.innerHTML = `
      <p>
-       ${data[random].Address.slice(0,3)} | ${data[random].Name}
+       ${data[random].Address.slice(0,3)} | ${data[random].ScenicSpotName}
      </p>
    `;
   console.log(bannerTitle);
