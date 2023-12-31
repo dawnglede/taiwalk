@@ -1,8 +1,10 @@
 import anchorIcon from '../../assets/image/anchor.svg'
 import searchIcon from '../../assets/image/search.svg'
-import { useState } from 'react'
+import noImage from '../../assets/image/noimage.svg'
+import { useEffect, useState } from 'react'
 import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { getScenicSpot, getRestaurant, getActivity } from '../api/index.js'
 
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -11,6 +13,108 @@ import 'swiper/css/pagination'
 
 const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
+  const [scenicSpot, setScenicSpot] = useState([])
+  const [restaurant, setRestaurant] = useState([])
+  const [activity, setActivity] = useState()
+
+  const getRandomNum = () => {
+    const nums = []
+    const randomNum = (max) => Math.floor(Math.random() * max)
+    return function() {
+      while(nums.length < 6) {
+        const newNum = randomNum(100)
+        if (nums.indexOf(newNum) === -1) {
+          nums.push(newNum)
+        } else {
+          continue
+        }
+      }
+      return nums
+    }
+  }
+
+  const random = getRandomNum()
+
+  const getScenicSpotData = () => {
+    getScenicSpot({city: '', topQty: '100'})
+      .then(res => {
+        if (res.data) setScenicSpot(res.data)
+      })
+      .catch(err => console.log(err))
+  }
+  const getRestaurantData = () => {
+    getRestaurant({city: '', topQty: '100'})
+      .then(res => {
+        if (res.data) setRestaurant(res.data)
+      })
+      .catch(err => console.log(err))
+  }
+
+  const getActivityData = () => {
+    getActivity({city: '', topQty: '100'})
+      .then(res => {
+        if (res.data) setActivity(res.data)
+      })
+      .catch(err => console.log(err))
+  }
+  useEffect(() => {
+    getScenicSpotData()
+    getRestaurantData()
+    getActivityData()
+  }, [])
+
+  const cardTitleEllipsis = (title, length) => title.length > length ? title.slice(0, length+1) + '...' : title
+  const convertDate = (date) => new Date(date).toLocaleDateString()
+
+  const renderScenicSpot = () => {
+    const data = scenicSpot?.slice(0, 4)
+    return data && data?.map(data => (
+      <div className="card__list--card">
+        <div className="cover"><img src={data?.Picture.PictureUrl1} alt={data?.Picture.PictureDescription1}/></div>
+        <div className="desc">
+          <div className="name">{cardTitleEllipsis(data?.ScenicSpotName, 11)}</div>
+          <div className="location">{data.Address.slice(0, 3)}</div>
+        </div>
+      </div>
+    ))
+  }
+  const renderRestaurant = () => {
+    const data = restaurant?.slice(0, 4)
+    return data?.map(data => (
+      <div className="card__list--card">
+        <div className="cover"><img src={data.Picture.PictureUrl1} alt={data.Picture.PictureDescription1}/></div>
+        <div className="desc">
+          <div className="name">{cardTitleEllipsis(data.RestaurantName, 11)}</div>
+          <div className="location">{data.Address.slice(0, 3)}</div>
+        </div>
+      </div>
+    ))
+  }
+
+  const renderActivity = () => {
+    if (!activity) return
+    const data = activity?.slice(0, 4)
+    return data?.map(data => (
+      <div className="item__list--item">
+        <div className="cover"><img src={data.Picture.PictureUrl1 ?? noImage} /></div>
+        <div className="desc">
+          <div className="date">{convertDate(data.StartTime)} - {convertDate(data.EndTime)}</div>
+          <div className="act-name">{cardTitleEllipsis(data.ActivityName, 28)}</div>
+          <div className="location">{data?.City?.slice(0, 3)}</div>
+          <a className="link">詳細介紹</a>
+        </div>
+      </div>
+    ))
+  }
+  const renderSwiper = () => {
+    const randomNum = random()
+    return randomNum?.map(num => (
+      <SwiperSlide>
+        <img src={scenicSpot[num]?.Picture?.PictureUrl1}/>
+        <div className='swiper-title'>{scenicSpot[num]?.ScenicSpotName + ' | ' + scenicSpot[num]?.Address.slice(0, 3)}</div>
+      </SwiperSlide>
+    ))
+  }
   return (
     <>
       <div className='home container'>
@@ -36,15 +140,16 @@ const Home = () => {
           </div>
         </section>
         <section className="home__swiper">
-          <Swiper
-            modules={[Navigation, Pagination]}
-            navigation
-            pagination={{ clickable: true }}
-          >
-            <SwiperSlide><img src="https://fakeimg.pl/1920x1080/" /></SwiperSlide>
-            <SwiperSlide><img src="https://fakeimg.pl/1920x1080/" /></SwiperSlide>
-            <SwiperSlide><img src="https://fakeimg.pl/1920x1080/" /></SwiperSlide>
-          </Swiper>
+          {
+            scenicSpot &&
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation
+              pagination={{ clickable: true }}
+            >
+              {renderSwiper()}
+            </Swiper>
+          }
         </section>
         <section className="home__activity content">
           <div className="title">
@@ -52,42 +157,7 @@ const Home = () => {
             <div className="link">查看更多活動</div>
           </div>
           <div className="item__list">
-            <div className="item__list--item">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="date">2021/10/30 - 2021/11/13</div>
-                <div className="act-name">2021日月潭花火音樂嘉年華</div>
-                <div className="location">南投縣</div>
-                <a className="link">詳細介紹</a>
-              </div>
-            </div>
-            <div className="item__list--item">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="date">2021/10/30 - 2021/11/13</div>
-                <div className="act-name">2021日月潭花火音樂嘉年華</div>
-                <div className="location">南投縣</div>
-                <a className="link">詳細介紹</a>
-              </div>
-            </div>
-            <div className="item__list--item">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="date">2021/10/30 - 2021/11/13</div>
-                <div className="act-name">2021日月潭花火音樂嘉年華</div>
-                <div className="location">南投縣</div>
-                <a className="link">詳細介紹</a>
-              </div>
-            </div>
-            <div className="item__list--item">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="date">2021/10/30 - 2021/11/13</div>
-                <div className="act-name">2021日月潭花火音樂嘉年華</div>
-                <div className="location">南投縣</div>
-                <a className="link">詳細介紹</a>
-              </div>
-            </div>
+            {activity && renderActivity()}
           </div>
         </section>
         <section className="home__spot content">
@@ -96,34 +166,7 @@ const Home = () => {
             <div className="link">查看更多景點</div>
           </div>
           <div className="card__list">
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/500x500/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
+            {scenicSpot && renderScenicSpot()}
           </div>
         </section>
         <section className="restuarant content">
@@ -132,34 +175,7 @@ const Home = () => {
             <div className="link">查看更多美食</div>
           </div>
           <div className="card__list">
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
-            <div className="card__list--card">
-              <div className="cover"><img src="https://fakeimg.pl/200x200/" /></div>
-              <div className="desc">
-                <div className="name">龜山島牛奶海</div>
-                <div className="location">南投縣</div>
-              </div>
-            </div>
+            {restaurant && renderRestaurant()}
           </div>
         </section>
       </div>

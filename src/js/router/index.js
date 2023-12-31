@@ -3,7 +3,7 @@ import {
   Routes,
   Route
 } from 'react-router-dom'
-import App from '../components/App'
+import App from '../components/App.jsx'
 
 const Router = () => {
   return (
